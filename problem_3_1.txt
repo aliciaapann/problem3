@@ -2,7 +2,7 @@
 ; input alphabet is {0, 1}
 
 
-;check if 0ent character is the middle character
+;check if current character is the middle character
 0 * * R checkNext
 
 ;check if character at MR2 is Y - if yes this is the middle
