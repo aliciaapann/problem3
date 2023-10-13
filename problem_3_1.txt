@@ -3,35 +3,41 @@
 
 
 ;check if current character is the middle character
-curr * * R checkNext
+curr * * * * R * checkNext
 
 ;check if character at MR2 is Y - if yes this is the middle
-checkNext Y Y L middle
+checkNext Y Y * * L * middle
 
 ;replace leftmost X if MR2 is not Y
-checkNext * * L moveLeft0
-moveLeft0 * * L moveLeft0
-moveLeft0 _ _ R replaceX
-moveLeft0 X X R replaceX
+checkNext * * * * L * moveLeft0
+moveLeft0 * * * * L * moveLeft0
+moveLeft0 _ _ * * R * replaceX
+moveLeft0 X X * * R * replaceX
+
+; if checkNext is blank, string is only one character
+checkNext _ _ * * L * single
 
 replaceX * X R moveRight
 
 ; Find rightmost Y
-moveRight * * R moveRight
-moveRight _ _ L replaceY
-moveRight Y Y L replaceY
+moveRight * * * * R * moveRight
+moveRight _ _ * * L * replaceY
+moveRight Y Y * * L * replaceY
 
 ; Move left after replacing Y
-replaceY * Y L moveLeft
+replaceY * Y * * L * moveLeft
 
 
 ;replace rightmost X
-moveLeft * * L moveLeft
-moveLeft X X R curr
+moveLeft * * * * L * moveLeft
+moveLeft X X * * R * curr
 
 ;check if middle = 1
-middle 1 1 * halt-accept
+middle 1 1 * * * * halt-accept
 
-middle * * * halt-reject
-curr Y Y * halt-reject
-replaceY X X * halt-reject
+middle * * * * * * halt-reject
+curr Y Y * * * * halt-reject
+replaceY X X * * * * halt-reject
+
+single 1 1 * * * * halt-accept
+single * * * * * * halt-reject
