@@ -1,0 +1,87 @@
+;check if current character is the middle character
+curr * * R checkNext
+
+;check if character at MR2 is Y - if yes this is the middle
+checkNext Y Y L middle
+checkNext X X L middle
+
+; if checkNext is blank, string is only one character
+checkNext _ _ L single
+
+;replace leftmost 0/1 if MR2 is not Y
+checkNext * * L moveLeft0
+moveLeft0 * * L moveLeft0
+moveLeft0 _ _ R replaceL
+moveLeft0 X X R replaceL
+moveLeft0 Y Y R replaceL
+
+replaceL 0 X R moveRight
+replaceL 1 Y R moveRight
+
+; Find rightmost Y
+moveRight * * R moveRight
+moveRight _ _ L replaceR
+moveRight Y Y L replaceR
+moveRight X X L replaceR
+
+; Move left after replacing R
+replaceR 0 X L moveLeft
+replaceR 1 Y L moveLeft
+
+;replace rightmost X
+moveLeft * * L moveLeft
+moveLeft X X R curr
+moveLeft Y Y R curr
+
+;instantly reject if middle is not 1
+middle 0 0 * halt-reject
+middle Y Y * halt-reject
+middle X X * halt-reject
+replaceR X X * halt-reject
+replaceR Y Y * halt-reject
+curr X X * halt-reject
+curr Y Y * halt-reject
+
+; if middle is 1, replace with # and move to start
+middle 1 # L moveLeft2
+moveLeft2 * * L moveLeft2
+moveLeft2 _ _ R replaceL2
+
+; replace LHS with 0s and 1s again
+
+replaceL2 X 0 R replaceL2
+replaceL2 Y 1 R replaceL2
+
+; Once middle is reached, go back to the start of string
+replaceL2 # # L moveLeft3
+moveLeft3 * * L moveLeft3
+moveLeft3 _ _ R replaceL3
+
+; Match 0/1 with RHS X/Y
+
+replaceL3 0 X R matchX
+replaceL3 1 Y R matchY
+replaceL3 # # R checkBlank
+
+; skip over 0/1 and replace RHS X/Y with blank if matched
+
+matchX * * R matchX
+matchY * * R matchY
+matchX X _ L foundX
+matchY Y _ L foundY
+
+; reject if can't match, accept if all blanks on RHS
+matchX Y Y * halt-reject
+matchY X X * halt-reject
+checkBlank _ _ * halt-accept
+single 1 1 * halt-accept
+single * * * halt-reject
+
+
+; move back to first 0/1 and repeat
+foundX * * L moveLeft4
+foundY * * L moveLeft4
+moveLeft4 * * L moveLeft4
+moveLeft4 X X R replaceL3
+moveLeft4 Y Y R replaceL3
+
