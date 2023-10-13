@@ -1,5 +1,5 @@
 ;check if current character is the middle character
-curr * * R checkNext
+0 * * R checkNext
 
 ;check if character at MR2 is Y - if yes this is the middle
 checkNext Y Y L middle
@@ -30,8 +30,8 @@ replaceR 1 Y L moveLeft
 
 ;replace rightmost X
 moveLeft * * L moveLeft
-moveLeft X X R curr
-moveLeft Y Y R curr
+moveLeft X X R 0
+moveLeft Y Y R 0
 
 ;instantly reject if middle is not 1
 middle 0 0 * halt-reject
@@ -39,8 +39,8 @@ middle Y Y * halt-reject
 middle X X * halt-reject
 replaceR X X * halt-reject
 replaceR Y Y * halt-reject
-curr X X * halt-reject
-curr Y Y * halt-reject
+0 X X * halt-reject
+0 Y Y * halt-reject
 
 ; if middle is 1, replace with # and move to start
 middle 1 # L moveLeft2
